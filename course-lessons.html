@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Course Lessons | CodeNest</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="style.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9f5;
+    }
+    .course-header {
+      background-color: #014421;
+      color: white;
+      padding: 1rem 0;
+    }
+    .course-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 3rem;
+      margin: 0;
+    }
+    .course-description {
+      padding: 2rem 0;
+    }
+    .lesson-card {
+      background-color: #f8f4d4;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .lesson-badge {
+      width: 40px;
+      height: 40px;
+      background-color: #014421;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .lesson-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #014421;
+      margin-bottom: 1rem;
+    }
+    .btn-start {
+      background-color: #014421;
+      color: white;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      text-align: center;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    .btn-start:hover {
+      background-color: #0b2e0f;
+      color: white;
+      text-decoration: none;
+    }
+    footer {
+      background-color: #f8f9f5;
+      padding: 50px 0;
+      font-family: 'Poppins', sans-serif;
+    }
+    footer .footer-bottom {
+      background-color: white;
+      border-top: 1px solid #e5e5e5;
+      padding: 15px 0;
+      font-size: 14px;
+      color: #014421;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top">
+    <div class="container">
+      <a href="index.html" class="navbar-brand d-flex align-items-center gap-2">
+        <span class="logo-text custom-logo-color">CodeNest</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="courses.html">Courses</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        </ul>
+        <!-- Search Container -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <!-- Search Bar -->
+          <div class="input-group" style="max-width: 300px;">
+            <input type="text" class="form-control" id="courseSearch" placeholder="Search..." />
+            <button id="searchBtn" class="btn custom-green-btn">
+              <i class="bi bi-search me-1"></i> Search
+            </button>
+          </div>            
+      </div>
+    </div>
+  </nav>
+  
+ <div id="course-container" class="mt-4"></div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="noTitleModal" tabindex="-1" aria-labelledby="noTitleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h5 class="modal-title" id="noTitleModalLabel">No Title Found</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Sorry, no courses matched your search.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Spacer for sticky navbar -->
+  <div style="height: 75px;"></div>
+
+  <!-- Course Header -->
+  <section class="course-header text-center">
+    <div class="container">
+      <h1 id="courseTitle">Loading...</h1>
+    </div>
+  </section>
+
+  <!-- Course Description and Image -->
+  <section class="course-description container d-flex flex-column flex-md-row align-items-center gap-4">
+    <div class="course-text flex-grow-1">
+      <p id="courseDescription" style="font-size: 1.1rem; color: #333;">Loading description...</p>
+    </div>
+    <div class="course-image flex-shrink-0 text-center">
+      <img id="courseImage" src="" alt="Course Image" class="img-fluid rounded-4 shadow" style="max-width: 400px; height: auto;">
+    </div>
+  </section>
+
+  <!-- Lessons Grid -->
+  <section class="container py-5">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold" style="font-family: 'Playfair Display', serif; color: #014421;">Lessons Included</h2>
+      <p class="text-muted" style="font-size: 1rem;">Click "Start Learning" to begin each lesson.</p>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="lessonsContainer">
+      <!-- Lessons will be dynamically inserted here -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+<footer style="background-color: #014421; color: #f8f9f5; padding: 60px 0; font-family: 'Poppins', sans-serif;">
+  <style>
+    footer a {
+      text-decoration: underline;
+      color: #f8f9f5;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover,
+    footer a:active {
+      color: #f1e2a7;
+    }
+  </style>
+
+  <div class="container">
+    <div class="row d-flex align-items-start text-md-start text-center">
+      
+      <!-- Codenest Info -->
+      <div class="col-md-4 mb-4 d-flex flex-column justify-content-start text-md-start text-center">
+        <h6 class="text-uppercase fw-bold">CodeNest</h6>
+        <p>Empowering learners<br>through accessible<br>& practical tech<br>education.</p>
+      </div>
+      
+      <!-- Quick Links -->
+      <div class="col-md-4 mb-4 d-flex flex-column justify-content-start text-center">
+        <h6 class="text-uppercase fw-bold">Quick Links</h6>
+        <ul class="list-unstyled">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      
+      <!-- Follow Us -->
+      <div class="col-md-4 mb-4 d-flex flex-column justify-content-start text-md-end text-center">
+        <h6 class="text-uppercase fw-bold">Follow Us</h6>
+        <div class="mt-3">
+          <a href="#" class="me-3"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <hr style="border-color: #f1e2a7;">
+    <div class="text-center mt-3">
+      <small>&copy; 2025 CodeNest. All Rights Reserved.</small>
+    </div>
+  </div>
+</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Your lesson container -->
+<div id="lessonsContainer"></div>
+
+<!-- Your script goes here -->
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const courseId = urlParams.get('courseId');
+
+  const courses = JSON.parse(localStorage.getItem('courses')) || [];
+  const course = courses.find(c => c.id === courseId);
+
+  const lessonsContainer = document.getElementById('lessonsContainer');
+
+  if (course && course.lessons && course.lessons.length > 0) {
+    course.lessons.forEach((lesson, index) => {
+      const lessonCard = document.createElement('div');
+      lessonCard.className = 'card p-3 my-2';
+      lessonCard.innerHTML = `
+        <h5>Lesson ${lesson.number}: ${lesson.title}</h5>
+        <p>${lesson.description || 'No description'}</p>
+        <a href="lesson.html?course=${course.id}&lesson=${lesson.number}" class="btn btn-primary">Start Lesson</a>
+      `;
+      lessonsContainer.appendChild(lessonCard);
+    });
+  } else {
+    lessonsContainer.innerHTML = '<p>No lessons found for this course.</p>';
+  }
+</script>
+  
+  <script>
+  document.getElementById('searchBtn').addEventListener('click', function () {
+  const keyword = document.getElementById('courseSearch').value.trim().toLowerCase();
+  const allCourses = JSON.parse(localStorage.getItem('courses')) || [];
+
+  const hasMatch = allCourses.some(course =>
+    course.title.toLowerCase().includes(keyword) ||
+    course.description.toLowerCase().includes(keyword)
+  );
+
+  if (hasMatch) {
+    // Redirect to courses.html with search query
+    window.location.href = `courses.html?search=${encodeURIComponent(keyword)}`;
+  } else {
+    const modal = new bootstrap.Modal(document.getElementById('noTitleModal'));
+    modal.show();
+  }
+});
+</script>
+</body>
+</html>
