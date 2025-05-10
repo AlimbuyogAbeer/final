@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Courses | CodeNest</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    .btn-outline-success {
+      color: #014421;
+      border-color: #014421;
+    }
+    .btn-outline-success:hover {
+      background-color: #014421;
+      color: #fff;
+      border-color: #014421;
+    }
+    .btn-outline-success:active,
+    .btn-outline-success:focus:active {
+      background-color: #014421 !important;
+      color: #fff !important;
+      border-color: #014421 !important;
+      box-shadow: none !important;
+    }
+    .card {
+      width: 100%;
+      margin: 0 auto;
+    }
+    .card-body {
+      min-height: 200px;
+    }
+    @media (max-width: 768px) {
+      .card {
+        width: 90%;
+      }
+    }
+    @media (max-width: 767px) {
+      .course-card {
+        width: 100% !important;
+        margin-bottom: 10px;
+      }
+    }
+    #coursesContainer {
+      margin-top: 20px;
+    }
+    .course {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  
+  #coursesContainer {
+    margin-top: -0;
+  }
+
+  .new-course {
+    margin-top: 10px;
+  }
+
+  /* Optional: Reduce space between filter buttons and course cards */
+  .filter-section {
+    margin-bottom: 1rem;
+  }
+  </style>
+  
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top">
+    <div class="container">
+      <a href="#" class="navbar-brand d-flex align-items-center gap-2">
+        <span class="logo-text custom-logo-color">CodeNest</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="courses.html">Courses</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        </ul>
+        <!-- Search + Sign In/Up Container -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <!-- Search Bar -->
+          <div class="input-group" style="max-width: 300px;">
+            <input type="text" class="form-control" id="courseSearch" placeholder="Search..." />
+            <button id="searchBtn" class="btn custom-green-btn">
+              <i class="bi bi-search me-1"></i> Search
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div id="course-container" class="mt-4"></div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="noTitleModal" tabindex="-1" aria-labelledby="noTitleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h5 class="modal-title" id="noTitleModalLabel">No Title Found</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Sorry, no courses matched your search.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<!-- Container that we will show/hide depending on course availability -->
+<div id="courseSection">
+  <!-- Explore Our Courses Section -->
+  <section style="background-color: #f8f9f5; padding: 6rem 0 2rem 0;">
+    <div class="container">
+      <div class="row justify-content-center mb-3">
+        <div class="col-md-8 text-center">
+          <h3 class="fw-bold mb-3" style="font-family: 'Playfair Display', serif; font-size: 3.5rem; color: #014421;">Explore Our Courses</h3>
+          <p style="color: #333; font-size: 1rem;">
+            Discover some of our course categories below. Learn new skills and expand your knowledge through our expertly crafted topics.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="noCoursesMessage" class="text-center" style="display: none; color: #777; padding-top: 10vh;">
+  <h4>No courses available</h4>
+  <p>Please check back later or contact an admin for more information.</p>
+</div>
+  
+  <!-- Filter Buttons -->
+<div id="filterButtons" class="mb-4 d-flex flex-wrap justify-content-center"></div>
+  
+    <!-- Course Cards Section -->
+    <div class="container" style="max-width: 1140px;">
+      <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+      </div>
+    </div>
+        
+    <!-- Courses Section -->
+    <section id="courses" class="container py-3">
+      <div class="row" id="coursesContainer"></div> <!-- Courses will be dynamically added here -->
+    </section>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="background-color: #014421; color: #f8f9f5; padding: 60px 0; font-family: 'Poppins', sans-serif;">
+  <style>
+    footer a {
+      text-decoration: underline;
+      color: #f8f9f5;
+      transition: color 0.3s ease;
+    }
+    footer a:hover,
+    footer a:active {
+      color: #f1e2a7;
+    }
+  </style>
+
+  <div class="container">
+    <div class="row d-flex align-items-start text-md-start text-center">
+      <div class="col-md-4 mb-4 d-flex flex-column justify-content-start text-md-start text-center">
+        <h6 class="text-uppercase fw-bold">CodeNest</h6>
+        <p>Empowering learners<br>through accessible<br>& practical tech<br>education.</p>
+      </div>
+      <div class="col-md-4 mb-4 d-flex flex-column justify-content-start text-center">
+        <h6 class="text-uppercase fw-bold">Quick Links</h6>
+        <ul class="list-unstyled">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4 mb-4 d-flex flex-column justify-content-start text-md-end text-center">
+        <h6 class="text-uppercase fw-bold">Follow Us</h6>
+        <div class="mt-3">
+          <a href="#" class="me-3"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+    <hr style="border-color: #f1e2a7;">
+    <div class="text-center mt-3">
+      <small>&copy; 2025 CodeNest. All Rights Reserved.</small>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  });
+
+function loadCourse() {
+  const allCourses = JSON.parse(localStorage.getItem('courses')) || [];
+  renderCourses(allCourses);
+}
+
+  window.onload = function () {
+    const fromSearch = new URLSearchParams(window.location.search).get('fromSearch');
+    const coursesContainer = document.getElementById('coursesContainer');
+    const allCourses = JSON.parse(localStorage.getItem('courses')) || [];
+
+    let coursesToRender = allCourses;
+
+    if (fromSearch === 'true') {
+      const searchResults = JSON.parse(localStorage.getItem('searchResults')) || [];
+      if (searchResults.length === 0) {
+        const modal = new bootstrap.Modal(document.getElementById('noTitleModal'));
+        modal.show();
+      }
+      coursesToRender = searchResults;
+    }
+
+    renderCourses(coursesToRender);
+    generateFilterButtons(allCourses);
+    toggleCourseVisibility(allCourses.length);
+
+    const searchInput = document.getElementById('courseSearch');
+    
+  };
+
+  function generateFilterButtons(courses) {
+    const filterContainer = document.querySelector('.filter-section');
+    if (!filterContainer) return;
+
+    filterContainer.innerHTML = '';
+
+    const allButton = document.createElement('button');
+    allButton.textContent = 'All';
+    allButton.classList.add('filter-btn', 'btn', 'btn-outline-success', 'me-2', 'mb-2', 'active');
+    allButton.setAttribute('data-category', 'all');
+    allButton.onclick = () => {
+      renderCourses(JSON.parse(localStorage.getItem('courses')) || []);
+      setActiveFilterButton('all');
+    };
+    filterContainer.appendChild(allButton);
+
+    const categories = new Set();
+    courses.forEach(course => {
+      if (course.category) categories.add(course.category.trim());
+    });
+
+    categories.forEach(category => {
+      const button = document.createElement('button');
+      button.textContent = category;
+      button.classList.add('filter-btn', 'btn', 'btn-outline-success', 'me-2', 'mb-2');
+      button.setAttribute('data-category', category);
+      button.onclick = () => {
+        const allCourses = JSON.parse(localStorage.getItem('courses')) || [];
+        const filtered = allCourses.filter(c => c.category === category);
+        renderCourses(filtered);
+        setActiveFilterButton(category);
+      };
+      filterContainer.appendChild(button);
+    });
+  }
+
+  function setActiveFilterButton(category) {
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-category') === category);
+    });
+  }
+
+  function renderCourses(courses) {
+  const coursesContainer = document.getElementById('coursesContainer');
+  coursesContainer.innerHTML = ''; // Clear the container
+
+  courses.forEach(course => {
+    const courseColumn = document.createElement('div');
+    courseColumn.classList.add('col-12', 'col-sm-6', 'col-md-4', 'course-card', 'new-course');
+    courseColumn.setAttribute('data-category', course.category || 'General');
+
+    const courseImage = course.imageUrl || 'https://via.placeholder.com/150';
+
+    // Create the course card
+    courseColumn.innerHTML = `
+      <div class="card h-100 rounded-4 shadow-sm hover-effect position-relative" style="background-color: #f8f9f5;">
+        <div class="p-2 pt-3">
+          <div class="rounded-4 overflow-hidden">
+            <img src="${courseImage}" class="img-fluid w-100" alt="${course.title}">
+          </div>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title fw-semibold">${course.title}</h5>
+          <div class="d-flex align-items-center mb-2 text-muted small">
+            <i class="bi bi-cloud-arrow-up me-2"></i>${course.topics || 0} Lesson Included
+          </div>
+          <p class="card-text flex-grow-1">${course.description}</p>
+          <a href="course-details.html?courseId=${course.id}" class="btn btn-outline-success mt-3" style="border-radius: 20px;">View Course</a>
+        </div>
+      </div>
+    `;
+
+    // Create lessons container
+    const lessonsContainer = document.createElement('div');
+    lessonsContainer.classList.add('lessons-container', 'mt-3', 'px-3');
+
+    // Render lesson containers for each lesson number
+    for (let i = 0; i < course.topics; i++) {
+      const lesson = (course.lessons && course.lessons[i]) || null;
+
+      const lessonCard = document.createElement('div');
+      lessonCard.classList.add('lesson-card', 'border', 'rounded', 'p-2', 'mb-2');
+      lessonCard.style.backgroundColor = '#e9f5ef';
+
+      if (lesson) {
+        lessonCard.innerHTML = `
+          <h6>Lesson ${i + 1}: ${lesson.title}</h6>
+          <p>${lesson.content || ''}</p>
+        `;
+      } else {
+        lessonCard.innerHTML = `<h6>Lesson ${i + 1}: <em>Not Published Yet</em></h6>`;
+      }
+
+      lessonsContainer.appendChild(lessonCard);
+    }
+
+    courseColumn.appendChild(lessonsContainer); // Append lessons container inside course card
+    coursesContainer.appendChild(courseColumn); // Append course card to container
+  });
+
+  toggleCourseVisibility(courses.length);
+}
+
+
+  function toggleCourseVisibility(courseCount) {
+    const exploreSection = document.getElementById('exploreSection'); // outer container with heading
+    const filterSection = document.querySelector('.filter-section');
+    const noCoursesMessage = document.getElementById('noCoursesMessage');
+
+    if (courseCount === 0) {
+      if (exploreSection) exploreSection.style.display = 'none';
+      if (filterSection) filterSection.style.display = 'none';
+      if (noCoursesMessage) noCoursesMessage.style.display = 'block';
+    } else {
+      if (exploreSection) exploreSection.style.display = 'block';
+      if (filterSection) filterSection.style.display = 'flex';
+      if (noCoursesMessage) noCoursesMessage.style.display = 'none';
+    }
+  }
+
+  document.getElementById('searchBtn').addEventListener('click', function () {
+  const keyword = document.getElementById('courseSearch').value.trim().toLowerCase();
+  const allCourses = JSON.parse(localStorage.getItem('courses')) || [];
+  const currentCategory = document.getElementById('currentCategory')?.value || 'All';  // If you have a way to track category
+
+  if (!keyword) {
+    // If search is empty, show all courses or filter by category
+    const filteredCourses = currentCategory === 'All' ? allCourses : allCourses.filter(course => course.category === currentCategory);
+    renderCourses(filteredCourses);
+    return;
+  }
+
+  const filtered = allCourses.filter(course =>
+    (currentCategory === 'All' || course.category === currentCategory) && 
+    (course.title.toLowerCase().includes(keyword) || course.description.toLowerCase().includes(keyword))
+  );
+
+  if (filtered.length === 0) {
+    const modal = new bootstrap.Modal(document.getElementById('noTitleModal'));
+    modal.show();
+    return;
+  }
+
+  renderCourses(filtered);
+});
+
+</script>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const courseContainer = document.getElementById('courseCards');
+    const filterButtons = document.getElementById('filterButtons');
+
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+
+    const courseSection = document.getElementById("courseSection");
+const noCoursesMessage = document.getElementById("noCoursesMessage");
+
+if (courses.length === 0) {
+  courseSection.style.display = "none";
+  noCoursesMessage.style.display = "block";
+} else {
+  courseSection.style.display = "block";
+  noCoursesMessage.style.display = "none";
+}
+    
+    const uniqueCategories = ['All', ...new Set(courses.map(course => course.title))];
+
+    uniqueCategories.forEach(category => {
+      const btn = document.createElement('button');
+      btn.textContent = category;
+      btn.className = 'btn btn-outline-success me-2 mb-2';
+      btn.addEventListener('click', () => displayCourses(category));
+      filterButtons.appendChild(btn);
+    });
+
+    function displayCourses(category) {
+      courseContainer.innerHTML = '';
+
+      const filteredCourses = category === 'All' ? courses : courses.filter(c => c.title === category);
+
+      if (filteredCourses.length === 0) {
+        courseContainer.innerHTML = '<p>No courses found for this category.</p>';
+        return;
+      }
+
+      filteredCourses.forEach(course => {
+        const col = document.createElement('div');
+        col.className = 'col-md-4 mb-4';
+
+        col.innerHTML = `
+          <div class="card h-100 shadow-sm">
+            <img src="${course.imageUrl}" class="card-img-top" alt="${course.title}">
+            <div class="card-body">
+              <h5 class="card-title">${course.title}</h5>
+              <p class="card-text">${course.description}</p>
+              <a href="lesson.html?course=${encodeURIComponent(course.title)}" class="btn btn-success">View Course</a>
+            </div>
+          </div>
+        `;
+
+        courseContainer.appendChild(col);
+      });
+    }
+
+    displayCourses('All');
+  });
+</script>
+  
+</body>
+</html>

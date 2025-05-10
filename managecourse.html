@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Course Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9f5
+    }
+    .sidebar {
+      background-color: #014421;
+      color: white;
+      height: 100vh;
+      padding-top: 30px;
+    }
+    .sidebar .nav-link {
+      color: white;
+      font-weight: 500;
+    }
+    .sidebar .nav-link:hover {
+      color: #b2dfdb;
+    }
+    .stat-card {
+      border-left: 6px solid #014421;
+      border-radius: 10px;
+    }
+    .course-card {
+      border-radius: 10px;
+      background-color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 20px;
+    }
+    .toggle-switch {
+      float: right;
+    }
+    .sidebar .nav-link.active {
+      background-color: #f8f9f5;
+      color: #014421;
+      border-radius: 5px;
+    }
+    .sidebar .nav-link:hover {
+      background-color: #e0f2f1;
+      color: #014421;
+      border-radius: 5px;
+    }
+    .sidebar .nav-link {
+      color: white;
+      font-weight: 500;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top">
+  <div class="container">
+    <a href="#" class="navbar-brand d-flex align-items-center gap-2">
+      <span class="logo-text fw-bold" style="color: #014421;">CodeNest</span>
+    </a>
+  </div>
+</nav>
+  
+<!-- Spacer -->
+<div style="height: 75px;"></div>
+
+<div class="container-fluid">
+  <div class="row">
+    
+    <!-- Sidebar -->
+    <div class="col-12 col-md-3 sidebar">
+       <ul class="nav flex-column px-3">
+        <li class="nav-item mb-3"><a class="nav-link" href="admin.html">Dashboard</a></li>
+        <li class="nav-item mb-3"><a class="nav-link active" href="editcourse.html">Manage Course & Lessons</a></li>
+        <li class="nav-item mb-3"><a class="nav-link" href="#">Manage Assessments</a></li>
+        <li class="nav-item mb-3"><a class="nav-link" href="#">Announcements</a></li>
+        <li class="nav-item mb-3"><a class="nav-link" href="index.html">Log Out</a></li>
+        </ul>
+    </div>
+  
+   <!-- Publish Course -->
+<div class="mb-4 p-4 bg-white rounded shadow-sm">
+  <h5 class="mb-3" style="color: #014421;">Publish New Course</h5>
+  <input type="text" id="courseTitle" class="form-control mb-2" placeholder="Course Title">
+  <textarea id="courseDescription" class="form-control mb-2" placeholder="Course Description"></textarea>
+  <input type="number" id="courseTopics" placeholder="Number of Lesson Included" class="form-control mb-3" min="1">
+  <input type="text" id="courseImage" placeholder="Upload Image URL" class="form-control mb-3">
+  <div class="text-end">
+  <button class="btn" style="background-color: #014421; color: white;" onclick="publishCourse()">Publish Course</button>
+  </div>
+</div> 
+  
+  <div class="container py-4">
+    <h3 class="mb-4" style="color:#014421">List of Published Courses</h3>
+    <div id="courseList"></div>
+  </div>
+  
+      <!-- Publish Lesson -->
+<div class="mb-4 p-4 bg-white rounded shadow-sm">
+  <h5 class="mb-3" style="color: #014421;">Publish New Lesson</h5>
+ <select id="lessonCourse" class="form-select mb-2">
+</select>
+<p id="noCategoryMessage" class="text-muted mt-1" style="display: none;">No category available. Please publish a course first.</p>
+  <input type="number" id="lessonTopic" class="form-control mb-2" placeholder="Enter Lesson Number" min="1">
+  <input type="text" id="lessonTitle" class="form-control mb-2" placeholder="Lesson Title">
+  <textarea id="lessonContent" class="form-control mb-2" placeholder="Lesson Content"></textarea>
+  <div class="text-end">
+  <button class="btn" style="background-color: #014421; color: white;" onclick="publishLesson()">Publish Lesson</button>
+  </div>
+</div>
+
+  <!-- List of Published Lesson -->
+<div class="container py-4">
+  <h3 class="mb-4" style="color:#014421">List of Published Lesson</h3>
+  <div id="lessonList"></div> 
+</div>
+  <div id="lesson-container"></div>
+<script>
+function loadCourses() {
+  const courseList = document.getElementById('courseList');
+  const courses = JSON.parse(localStorage.getItem('courses')) || [];
+  const lessonCourseSelect = document.getElementById('lessonCourse');
+
+  courseList.innerHTML = '';
+  lessonCourseSelect.innerHTML = ''; // Clear existing options
+
+  // Add non-selectable placeholder
+  const placeholderOption = document.createElement('option');
+  placeholderOption.textContent = 'Select Course';
+  placeholderOption.disabled = true;
+  placeholderOption.selected = true;
+  placeholderOption.hidden = true;
+  lessonCourseSelect.appendChild(placeholderOption);
+
+  if (courses.length === 0) {
+    const noOption = document.createElement('option');
+    noOption.textContent = 'No category available';
+    noOption.disabled = true;
+    lessonCourseSelect.appendChild(noOption);
+
+    courseList.innerHTML = '<p>No courses published yet.</p>';
+    return;
+  }
+
+  courses.forEach((course, index) => {
+    const courseCard = document.createElement('div');
+    courseCard.className = 'p-3 mb-3 bg-white rounded shadow-sm';
+    courseCard.innerHTML = `
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="mb-1">${course.title}</h5>
+          <small class="text-muted">${course.topics || 0} Lesson Included</small>
+        </div>
+        <div>
+          <button class="btn btn-outline-secondary btn-sm me-2" onclick="editCourse(${index})">Edit</button>
+          <button class="btn btn-outline-danger btn-sm" onclick="deleteCourse(${index})">Delete</button>
+        </div>
+      </div>
+    `;
+    courseList.appendChild(courseCard);
+
+    // Add course to lesson dropdown
+    const option = document.createElement('option');
+    option.value = course.title;
+    option.textContent = course.title;
+    lessonCourseSelect.appendChild(option);
+  });
+}
+
+function deleteCourse(index) {
+  const courses = JSON.parse(localStorage.getItem('courses')) || [];
+  if (confirm(`Are you sure you want to delete "${courses[index].title}"?`)) {
+    courses.splice(index, 1);
+    localStorage.setItem('courses', JSON.stringify(courses));
+    loadCourses();
+  }
+}
+
+function editCourse(index) {
+  const courses = JSON.parse(localStorage.getItem('courses')) || [];
+  const course = courses[index];
+
+  // Replace the current form inputs with the selected course's data
+  document.getElementById('courseTitle').value = course.title;
+  document.getElementById('courseDescription').value = course.description;
+  document.getElementById('courseImage').value = course.imageUrl;
+  document.getElementById('courseTopics').value = course.topics;
+
+  // Change button label to "Save Changes" and assign a new function
+  const publishBtn = document.querySelector('button[onclick="publishCourse()"]');
+  publishBtn.textContent = 'Save Changes';
+  publishBtn.onclick = function () {
+    saveEditedCourse(index);
+  };
+}
+  
+function saveEditedCourse(index) {
+  const title = document.getElementById('courseTitle').value;
+  const desc = document.getElementById('courseDescription').value;
+  const image = document.getElementById('courseImage').value;
+  const topics = parseInt(document.getElementById('courseTopics').value);
+
+  if (title && desc && image && topics) {
+    let courses = JSON.parse(localStorage.getItem('courses')) || [];
+
+    courses[index] = {
+      ...courses[index],
+      title,
+      description: desc,
+      imageUrl: image,
+      topics
+    };
+
+    localStorage.setItem('courses', JSON.stringify(courses));
+    const modal = new bootstrap.Modal(document.getElementById('successModal'));
+modal.show();
+    
+    // Reset the form
+    document.getElementById('courseTitle').value = '';
+    document.getElementById('courseDescription').value = '';
+    document.getElementById('courseImage').value = '';
+    document.getElementById('courseTopics').value = '';
+
+    // Restore publish button
+    const publishBtn = document.querySelector('button[onclick]');
+    publishBtn.textContent = 'Publish Course';
+    publishBtn.setAttribute('onclick', 'publishCourse()');
+
+    loadCourses();
+  } else {
+    alert('Please fill in all fields.');
+  }
+}
+
+function publishCourse() {
+  const title = document.getElementById('courseTitle').value;
+  const desc = document.getElementById('courseDescription').value;
+  const image = document.getElementById('courseImage').value;
+  const topics = parseInt(document.getElementById('courseTopics').value); 
+
+  if (title && desc && image && topics) {
+    let courses = JSON.parse(localStorage.getItem('courses')) || [];
+    const courseId = Date.now().toString();
+
+    // Initialize lessons array with empty placeholders
+    const lessons = Array(topics).fill(null);
+
+    courses.push({ id: courseId, title, description: desc, imageUrl: image, topics, lessons });
+
+    localStorage.setItem('courses', JSON.stringify(courses));
+    
+    // Show success modal or alert
+    alert('Course successfully published!');
+
+    // Reset form
+    document.getElementById('courseTitle').value = '';
+    document.getElementById('courseDescription').value = '';
+    document.getElementById('courseImage').value = '';
+    document.getElementById('courseTopics').value = '';
+
+    loadCourses();
+  } else {
+    alert('Please fill in all fields: Title, Description, Image URL, and Number of Lessons.');
+  }
+}
+
+
+function publishLesson() {
+  const title = document.getElementById('lessonTitle').value.trim();
+  const content = document.getElementById('lessonContent').value.trim();
+  const courseTitle = document.getElementById('lessonCourse').value;
+  const number = parseInt(document.getElementById('lessonTopic').value); // Lesson number input
+
+  if (title && content && courseTitle && number) {
+    let courses = JSON.parse(localStorage.getItem('courses')) || [];
+
+    const courseIndex = courses.findIndex(course => course.title === courseTitle);
+
+    if (courseIndex !== -1) {
+      const course = courses[courseIndex];
+
+      // Check if lesson number is within range
+      if (number < 1 || number > course.topics) {
+        alert(`Lesson number must be between 1 and ${course.topics}`);
+        return;
+      }
+
+      const newLesson = {
+        title: title,
+        number: number,
+        content: content,
+        link: `${title.toLowerCase().replace(/\s+/g, '')}.html`
+      };
+
+      if (!Array.isArray(course.lessons)) {
+        course.lessons = Array(course.topics).fill(null);
+      }
+
+      // Store lesson at index (number - 1)
+      course.lessons[number - 1] = newLesson;
+
+      localStorage.setItem('courses', JSON.stringify(courses));
+
+      alert(`Lesson "${title}" (Lesson ${number}) published under "${courseTitle}" course!`);
+
+      // Reset fields
+      document.getElementById('lessonTitle').value = '';
+      document.getElementById('lessonContent').value = '';
+      document.getElementById('lessonCourse').value = '';
+      document.getElementById('lessonTopic').value = '';
+    } else {
+      alert('Selected course not found.');
+    }
+    loadLessons();
+  } else {
+    alert('Please fill in all fields.');
+  }
+}
+function loadLessons() {
+  const lessonList = document.getElementById('lessonList');
+  const courses = JSON.parse(localStorage.getItem('courses')) || [];
+
+  lessonList.innerHTML = '';
+
+  let lessonIndexGlobal = 0; // To uniquely identify lessons for edit/delete if needed
+  let lessonsFound = false;
+
+  courses.forEach((course, courseIndex) => {
+    if (Array.isArray(course.lessons)) {
+      course.lessons.forEach((lesson, lessonIndex) => {
+        if (lesson) {
+          lessonsFound = true;
+
+          const lessonCard = document.createElement('div');
+          lessonCard.className = 'p-3 mb-3 bg-white rounded shadow-sm';
+
+          lessonCard.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div><strong>Course:</strong> ${course.title}</div>
+                <div><strong>Lesson:</strong> ${lesson.number} - ${lesson.title}</div>
+              </div>
+              <div>
+                <button class="btn btn-outline-secondary btn-sm me-2" onclick="editLesson(${courseIndex}, ${lessonIndex})">Edit</button>
+                <button class="btn btn-outline-danger btn-sm" onclick="deleteLesson(${courseIndex}, ${lessonIndex})">Delete</button>
+              </div>
+            </div>
+          `;
+
+          lessonList.appendChild(lessonCard);
+          lessonIndexGlobal++;
+        }
+      });
+    }
+  });
+
+  if (!lessonsFound) {
+    lessonList.innerHTML = '<p>No lessons published yet.</p>';
+  }
+} 
+
+    function deleteLesson(courseIndex, lessonIndex) {
+  const courses = JSON.parse(localStorage.getItem('courses')) || [];
+  if (confirm(`Are you sure you want to delete lesson "${courses[courseIndex].lessons[lessonIndex].title}"?`)) {
+    courses[courseIndex].lessons[lessonIndex] = null; // Remove lesson by setting to null
+    localStorage.setItem('courses', JSON.stringify(courses));
+    loadLessons();
+  }
+}
+
+function editLesson(courseIndex, lessonIndex) {
+  const courses = JSON.parse(localStorage.getItem('courses')) || [];
+  const lesson = courses[courseIndex].lessons[lessonIndex];
+
+  // Populate your lesson edit form fields here, for example:
+  document.getElementById('lessonCourse').value = courses[courseIndex].title;
+  document.getElementById('lessonTopic').value = lesson.number;
+  document.getElementById('lessonTitle').value = lesson.title;
+  document.getElementById('lessonContent').value = lesson.content;
+
+  // Change your publish button to save changes (similar to editCourse)
+  const publishBtn = document.querySelector('button[onclick="publishLesson()"]');
+  publishBtn.textContent = 'Save Changes';
+  publishBtn.onclick = function () {
+    saveEditedLesson(courseIndex, lessonIndex);
+  };
+}
+
+function saveEditedLesson(courseIndex, lessonIndex) {
+  const title = document.getElementById('lessonTitle').value.trim();
+  const content = document.getElementById('lessonContent').value.trim();
+  const number = parseInt(document.getElementById('lessonTopic').value);
+
+  if (!title || !content || !number) {
+    alert('Please fill in all fields.');
+    return;
+  }
+
+  const courses = JSON.parse(localStorage.getItem('courses')) || [];
+  const course = courses[courseIndex];
+
+  if (number < 1 || number > course.topics) {
+    alert(`Lesson number must be between 1 and ${course.topics}`);
+    return;
+  }
+
+  course.lessons[lessonIndex] = {
+    title,
+    number,
+    content,
+    link: `${title.toLowerCase().replace(/\s+/g, '')}.html`
+  };
+
+  localStorage.setItem('courses', JSON.stringify(courses));
+
+  alert('Lesson updated successfully!');
+
+  // Reset form
+  document.getElementById('lessonTitle').value = '';
+  document.getElementById('lessonContent').value = '';
+  document.getElementById('lessonCourse').value = '';
+  document.getElementById('lessonTopic').value = '';
+
+  // Restore publish button
+  const publishBtn = document.querySelector('button[onclick]');
+  publishBtn.textContent = 'Publish Lesson';
+  publishBtn.setAttribute('onclick', 'publishLesson()');
+
+  loadLessons();
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadCourses();
+  loadLessons();
+});
+
+</script>
+  
+  <!-- Edit Course Modal -->
+<div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCourseModalLabel">Edit Course</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editCourseIndex">
+        <input type="text" id="editCourseTitle" class="form-control mb-2" placeholder="Course Title">
+        <textarea id="editCourseDescription" class="form-control mb-2" placeholder="Course Description"></textarea>
+        <input type="number" id="editCourseTopics" class="form-control mb-2" placeholder="Number of Topics" min="1">
+        <input type="text" id="editCourseImage" class="form-control mb-2" placeholder="Image URL">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" onclick="saveEditedCourse()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Success</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Course updated successfully!
+      </div>
+      <div class="modal-footer">
+<button type="button" class="btn" style="background-color: #014421; color: white;" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <!-- Edit Lesson Modal -->
+<div class="modal fade" id="editLessonModal" tabindex="-1" aria-labelledby="editLessonModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editLessonModalLabel">Edit Lesson</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editLessonCourseIndex" />
+        <input type="hidden" id="editLessonIndex" />
+        <div class="mb-3">
+          <label for="editLessonCourse" class="form-label">Course</label>
+          <input type="text" id="editLessonCourse" class="form-control" disabled />
+        </div>
+        <div class="mb-3">
+          <label for="editLessonNumber" class="form-label">Lesson Number</label>
+          <input type="number" id="editLessonNumber" class="form-control" min="1" />
+        </div>
+        <div class="mb-3">
+          <label for="editLessonTitle" class="form-label">Lesson Title</label>
+          <input type="text" id="editLessonTitle" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label for="editLessonContent" class="form-label">Lesson Content</label>
+          <textarea id="editLessonContent" class="form-control" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" id="saveLessonChangesBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+       
+  <!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="successModalLabel" style="color: #014421;">Success</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">Course successfully published!
+      </div>
+      <div class="modal-footer border-0 justify-content-center">
+        <button type="button" class="btn" style="background-color: #014421; color: white;" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

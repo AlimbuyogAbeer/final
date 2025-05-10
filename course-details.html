@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Course Details | CodeNest</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    /* Optional: style lesson containers */
+    .lesson-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 20px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .lesson-title {
+      font-weight: 600;
+      color: #014421;
+      min-height: 3rem;
+    }
+    .lesson-content {
+      color: #555;
+      font-size: 0.9rem;
+      flex-grow: 1;
+      margin-top: 0.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-disabled {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top">
+    <div class="container">
+      <a href="#" class="navbar-brand d-flex align-items-center gap-2">
+        <span class="logo-text custom-logo-color">CodeNest</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="courses.html">Courses</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        </ul>
+        
+         <!-- Search + Sign In/Up Container -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <!-- Search Bar -->
+          <div class="input-group" style="max-width: 300px;">
+            <input type="text" class="form-control" id="courseSearch" placeholder="Search..." />
+            <button id="searchBtn" class="btn custom-green-btn">
+              <i class="bi bi-search me-1"></i> Search
+            </button>
+          </div>
+                
+      </div>
+    </div>
+  </nav>
+  
+   <div id="course-container" class="mt-4"></div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="noTitleModal" tabindex="-1" aria-labelledby="noTitleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h5 class="modal-title" id="noTitleModalLabel">No Title Found</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Sorry, no courses matched your search.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Spacer for sticky navbar -->
+  <div style="height: 75px;"></div>
+
+  <!-- Explore Section -->
+  <section id="course-section" style="background-color: #014421; padding: 1rem 0 1rem 0;">
+    <div class="container">
+      <div class="row align-items-center justify-content-between mb-5">
+        <div class="col-md-6">
+          <h3 id="course-title" class="fw-bold mb-3" style="font-family: 'Playfair Display', serif; font-size: 3.5rem; color: white;"></h3>
+          <p id="course-description" style="color: white; font-size: 1rem;"></p>
+        </div>
+        <div class="col-md-6 text-center">
+          <img id="course-image" src="" alt="Course Image" class="img-fluid rounded-4 shadow" style="max-width: 100%; height: auto;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Topics Section -->
+  <section style="background-color: #f0f4f2; padding: 3rem 0;">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 id="topics-heading" class="fw-bold mb-2" style="font-family: 'Playfair Display', serif; color: #014421;"></h2>
+        <p class="text-muted" style="font-size: 1rem;" id="topics-description"></p>
+      </div>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 text-center" id="topics-list"></div>
+    </div>
+  </section>
+
+<!-- Footer -->
+<footer style="background-color: #014421; color: #f8f9f5; padding: 60px 0; font-family: 'Poppins', sans-serif;">
+  <style>
+    footer a {
+      text-decoration: underline;
+      color: #f8f9f5;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover,
+    footer a:active {
+      color: #f1e2a7;
+    }
+  </style>
+
+  <div class="container">
+    <div class="row d-flex align-items-start text-md-start text-center">
+      
+      <!-- Codenest Info -->
+      <div class="col-md-4 mb-4 d-flex flex-column justify-content-start text-md-start text-center">
+        <h6 class="text-uppercase fw-bold">CodeNest</h6>
+        <p>Empowering learners<br>through accessible<br>& practical tech<br>education.</p>
+      </div>
+      
+      <!-- Quick Links -->
+      <div class="col-md-4 mb-4 d-flex flex-column justify-content-start text-center">
+        <h6 class="text-uppercase fw-bold">Quick Links</h6>
+        <ul class="list-unstyled">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      
+      <!-- Follow Us -->
+      <div class="col-md-4 mb-4 d-flex flex-column justify-content-start text-md-end text-center">
+        <h6 class="text-uppercase fw-bold">Follow Us</h6>
+        <div class="mt-3">
+          <a href="#" class="me-3"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <hr style="border-color: #f1e2a7;">
+    <div class="text-center mt-3">
+      <small>&copy; 2025 CodeNest. All Rights Reserved.</small>
+    </div>
+  </div>
+</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+window.onload = function () {
+  const urlParams = new URLSearchParams(window.location.search);  // Initialize URLSearchParams to get URL parameters
+  const courseId = urlParams.get('courseId');  // Get courseId from URL params
+
+  const courses = JSON.parse(localStorage.getItem('courses')) || [];
+  console.log('Courses in localStorage:', courses);
+
+  if (courses.length === 0) {
+    console.warn('No courses in localStorage.');
+    return; // Stop execution if no courses exist
+  }
+
+  // Find the course by matching the courseId with the id in the courses array
+  const course = courses.find(c => c.id === courseId);
+  console.log('Selected Course:', course);
+
+  if (course) {
+    document.getElementById('course-title').textContent = course.title;
+    document.getElementById('course-description').textContent = course.description;
+    document.getElementById('course-image').src = course.imageUrl;
+    document.getElementById('course-image').alt = course.title;
+    document.getElementById('topics-heading').textContent = `${course.topics} Lesson${course.topics > 1 ? 's' : ''} Included`;
+    document.getElementById('topics-description').textContent = 'Master the essentials with these foundational lessons.';
+
+    const topicsList = document.getElementById('topics-list');
+    topicsList.innerHTML = ''; // Clear in case of reloads
+
+    // Ensure lessons array exists and has length = course.topics
+    const lessons = Array(course.topics).fill(null);
+    if (Array.isArray(course.lessons)) {
+      for (let i = 0; i < course.lessons.length; i++) {
+        if (course.lessons[i]) lessons[i] = course.lessons[i];
+      }
+    }
+
+    // Render lesson containers with lesson data or placeholders
+    for (let i = 0; i < course.topics; i++) {
+      const lesson = lessons[i];
+      const lessonNumber = i + 1;
+
+      const topicCard = document.createElement('div');
+      topicCard.classList.add('col');
+
+      topicCard.innerHTML = `
+        <div class="lesson-card d-flex flex-column justify-content-between">
+          <div>
+            <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                 style="width: 40px; height: 40px; background-color: #014421; color: white; font-weight: bold;">
+              ${lessonNumber}
+            </div>
+            <h6 class="lesson-title mt-3">${lesson ? lesson.title : `Lesson ${lessonNumber} (Not Published Yet)`}</h6>
+            <p class="lesson-content">${lesson ? (lesson.content || '') : 'This lesson has not been published yet.'}</p>
+          </div>
+          <a href="lesson.html?courseId=${encodeURIComponent(course.id)}&lessonNumber=${lessonNumber}" class="btn btn-sm custom-green-btn mt-3">Start Learning</a>
+      </div>
+      `;
+
+      topicsList.appendChild(topicCard);
+    }
+  } else {
+    document.getElementById('course-section').innerHTML = '<h4 style="color:white;">Course not found!</h4>';
+  }
+};
+  </script>
+   
+<script>
+  document.getElementById('searchBtn').addEventListener('click', function () {
+    const keyword = document.getElementById('courseSearch').value.trim().toLowerCase();
+    const allCourses = JSON.parse(localStorage.getItem('courses')) || [];
+    const currentCategory = document.getElementById('currentCategory')?.value || 'All';
+
+    let filteredCourses = allCourses;
+
+    if (currentCategory !== 'All') {
+      filteredCourses = filteredCourses.filter(course => course.category === currentCategory);
+    }
+
+    if (keyword) {
+      filteredCourses = filteredCourses.filter(course =>
+        course.title.toLowerCase().includes(keyword) ||
+        course.description.toLowerCase().includes(keyword)
+      );
+    }
+
+    if (filteredCourses.length === 0) {
+      const modal = new bootstrap.Modal(document.getElementById('noTitleModal'));
+      modal.show();
+    } else {
+      renderCourses(filteredCourses);
+    }
+  });
+
+  function renderCourses(courses) {
+    const container = document.getElementById('course-container'); // Or change to match your actual container
+    container.innerHTML = '';
+
+    courses.forEach(course => {
+      const courseCard = `
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5>${course.title}</h5>
+            <p>${course.description}</p>
+            <a href="viewcourse.html?courseId=${course.id}" class="btn btn-success">View Course</a>
+          </div>
+        </div>
+      `;
+      container.innerHTML += courseCard;
+    });
+  }
+</script>
+</body>
+</html>
